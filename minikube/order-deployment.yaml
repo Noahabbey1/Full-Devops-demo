@@ -2,24 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: auth-deployment
+  name: order-deployment
 
 spec:
   replicas: 2
 
   selector:
     matchLabels:
-      app: auth-app
+      app: order-app
 
   template:
     metadata:
       labels:
-        app: auth-app
+        app: order-app
 
     spec:
       containers:
-      - name: auth-container
-        image: abbeysne/auth-service:v1
+      - name: order-container
+        image: abbeysne/order-service:v1
 
         ports:
         - containerPort: 5003
