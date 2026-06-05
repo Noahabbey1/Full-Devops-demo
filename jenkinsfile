@@ -31,19 +31,19 @@ stages{
 
         stage('Build Auth Service Image') {
             steps {
-                sh 'docker build -t auth-service:v1 ./auth-service'
+                sh 'docker build -t abbeysne/auth-service:v1 ./auth-service'
             }
         }
 
         stage('Build Product Service Image') {
             steps {
-                sh 'docker build -t product-service:v1 ./product-service'
+                sh 'docker build -t abbeysne/product-service:v1 ./product-service'
             }
         }
 
         stage('Build Order Service Image') {
             steps {
-                sh 'docker build -t order-service:v1 ./order-service'
+                sh 'docker build -t abbeysne/order-service:v1 ./order-service'
             }
         }
 
