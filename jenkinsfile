@@ -59,22 +59,22 @@ stages{
         stage('Tag Docker Images') {
             steps {
 
-                sh 'docker tag auth-service:v1 abbeysne/auth-service-new:v1'
+                sh 'docker tag auth-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/auth-service-new:v1'
 
-                sh 'docker tag product-service:v1 abbeysne/product-service-new:v1'
+                sh 'docker tag product-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/product-service-new:v1'
 
-                sh 'docker tag order-service:v1 abbeysne/order-service:v1'
+                sh 'docker tag order-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/order-service:v1'
             }
         }
 
         stage('Push Images to Docker Hub') {
             steps {
 
-                sh 'docker push abbeysne/auth-service:v1'
+                sh 'docker push ${DOCKERHUB_CREDENTIALS_USR}/auth-service:v1'
 
-                sh 'docker push abbeysne/product-service:v1'
+                sh 'docker push ${DOCKERHUB_CREDENTIALS_USR}/product-service:v1'
 
-                sh 'docker push abbeysne/order-service:v1'
+                sh 'docker push ${DOCKERHUB_CREDENTIALS_USR}/abbeysne/order-service:v1'
             }
         }
 
