@@ -8,7 +8,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
 
 }
-stages
+stages{
 
         stage('Cleanup Old Containers and Images') {
             steps {
@@ -84,15 +84,17 @@ stages
                 sh 'docker images'
             }
         }
+        stage('Deploy to minikube') {
+            steps {
+
+                sh 'kubectl apply -f k8s/'
+
+                sh 'kubectl get deployments'
+
+                sh 'kubectl get pods'
+            }
+        }
     }
 }
-stage('Deploy to EKS') {
-    steps {
 
-        sh 'kubectl apply -f k8s/'
 
-        sh 'kubectl get deployments'
-
-        sh 'kubectl get pods'
-    }
-}
