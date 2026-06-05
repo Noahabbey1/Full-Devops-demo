@@ -59,11 +59,11 @@ stages{
         stage('Tag Docker Images') {
             steps {
 
-                sh 'docker tag auth-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/auth-service:v1'
+                sh 'docker tag abbeysne/auth-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/auth-service:v1'
 
-                sh 'docker tag product-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/product-service:v1'
+                sh 'docker tag abbeysne/product-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/product-service:v1'
 
-                sh 'docker tag order-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/order-service:v1'
+                sh 'docker tag abbeysne/order-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/order-service:v1'
             }
         }
 
