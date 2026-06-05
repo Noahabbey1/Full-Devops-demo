@@ -1,55 +1,39 @@
 pipeline {
-  
-  agent {
-      label 'myslave'
 
-  }
+    agent {
+        label 'myslave'
+    }
+
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+    }
 
-}
-stages{
+    stages {
 
         stage('Cleanup Old Containers and Images') {
             steps {
-
                 sh '''
                 docker rm -f auth-container product-container order-container || true
-                '''
-
-                sh '''
                 docker rmi -f auth-service:v1 product-service:v1 order-service:v1 || true
+                docker rmi -f $DOCKERHUB_CREDENTIALS_USR/auth-service:v1 || true
+                docker rmi -f $DOCKERHUB_CREDENTIALS_USR/product-service:v1 || true
+                docker rmi -f $DOCKERHUB_CREDENTIALS_USR/order-service:v1 || true
                 '''
+            }
+        }
 
+        stage('Build Docker Images') {
+            steps {
                 sh '''
-                docker rmi -f abbeysne/auth-service:v1 || true
-                docker rmi -f abbeysne/product-service:v1 || true
-                docker rmi -f abbeysne/order-service:v1 || true
+                docker build -t auth-service:v1 ./auth-service
+                docker build -t product-service:v1 ./product-service
+                docker build -t order-service:v1 ./order-service
                 '''
-            }
-        }
-
-        stage('Build Auth Service Image') {
-            steps {
-                sh 'docker build -t abbeysne/auth-service:v1 ./auth-service'
-            }
-        }
-
-        stage('Build Product Service Image') {
-            steps {
-                sh 'docker build -t abbeysne/product-service:v1 ./product-service'
-            }
-        }
-
-        stage('Build Order Service Image') {
-            steps {
-                sh 'docker build -t abbeysne/order-service:v1 ./order-service'
             }
         }
 
         stage('Docker Hub Login') {
             steps {
-
                 sh '''
                 echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
                 '''
@@ -58,36 +42,33 @@ stages{
 
         stage('Tag Docker Images') {
             steps {
-
-                sh 'docker tag abbeysne/auth-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/auth-service:v1'
-
-                sh 'docker tag abbeysne/product-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/product-service:v1'
-
-                sh 'docker tag abbeysne/order-service:v1 ${DOCKERHUB_CREDENTIALS_USR}/order-service:v1'
+                sh '''
+                docker tag auth-service:v1 $DOCKERHUB_CREDENTIALS_USR/auth-service:v1
+                docker tag product-service:v1 $DOCKERHUB_CREDENTIALS_USR/product-service:v1
+                docker tag order-service:v1 $DOCKERHUB_CREDENTIALS_USR/order-service:v1
+                '''
             }
         }
 
         stage('Push Images to Docker Hub') {
             steps {
-
-                sh 'docker push ${DOCKERHUB_CREDENTIALS_USR}/auth-service:v1'
-
-                sh 'docker push ${DOCKERHUB_CREDENTIALS_USR}/product-service:v1'
-
-                sh 'docker push ${DOCKERHUB_CREDENTIALS_USR}/abbeysne/order-service:v1'
+                sh '''
+                docker push $DOCKERHUB_CREDENTIALS_USR/auth-service:v1
+                docker push $DOCKERHUB_CREDENTIALS_USR/product-service:v1
+                docker push $DOCKERHUB_CREDENTIALS_USR/order-service:v1
+                '''
             }
         }
 
         stage('Verify Docker Images') {
             steps {
-
                 sh 'docker images'
             }
         }
         stage('Deploy to minikube') {
             steps {
 
-                sh 'kubectl apply -f k8s/'
+                sh 'kubectl apply -f minikube/'
 
                 sh 'kubectl get deployments'
 
@@ -96,5 +77,5 @@ stages{
         }
     }
 }
-
+        
 
