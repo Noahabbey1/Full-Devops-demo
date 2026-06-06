@@ -3,9 +3,11 @@ kind: Service
 metadata:
   name: order-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: order-app
   ports:
-    - port: 80
-      targetPort: 5003
+    - protocol: TCP
+      port: 80
+      targetPort: 5001
+      nodePort: 30003
